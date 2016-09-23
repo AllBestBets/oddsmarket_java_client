@@ -10,9 +10,6 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 
-/**
- * Created by andrey on 22.09.16.
- */
 public class ArbsAPI {
 
     public static final String PREMATCH_URL = "https://api-pr.oddsmarket.org/v1/bookmakers/%s/arbs";
@@ -29,36 +26,41 @@ public class ArbsAPI {
 
     public APIResponse execute() {
         try {
-            String serviceUrl;
+            final String serviceUrl;
+
             if (type == OddsmarketAPI.APIType.PREMATCH) {
                 serviceUrl = PREMATCH_URL;
-            } else {
+
+            } else if (type == OddsmarketAPI.APIType.LIVE) {
                 serviceUrl = LIVE_URL;
+
+            } else {
+                return null;
             }
 
-            Request req = null;
-            String url = String.format(serviceUrl, StringUtils.join(requestData.getBookmakerIds(), ","));
+            final String url = String.format(serviceUrl, StringUtils.join(requestData.getBookmakerIds(), ","));
+            final Request req;
 
             if (requestData.getMethod() == ArbsAPIRequestData.Method.GET) {
                 req = Request.Get(OddsmarketAPI.encodeURL(url + "?" + requestData.getQueryForGetRequest()));
-            }
-            if (requestData.getMethod() == ArbsAPIRequestData.Method.POST) {
-                req = Request.Post(url + "?apiKey=" + requestData.getApiKey());
-                req = req.bodyString(requestData.getBodyForPostRequest(), ContentType.APPLICATION_JSON);
-            }
 
-            if (lastResponse != null) {
-                if (lastResponse.getEtag() != null) {
-                    req = req.addHeader("If-None-Match", lastResponse.getEtag());
-                }
+            } else if (requestData.getMethod() == ArbsAPIRequestData.Method.POST) {
+                req = Request.Post(url + "?apiKey=" + requestData.getApiKey()).
+                        bodyString(requestData.getBodyForPostRequest(), ContentType.APPLICATION_JSON);
+
+            } else {
+                return null;
             }
 
-            Response response = req
-                    .addHeader("Content-Type", "text/" + requestData.getFormat().toString())
-                    .addHeader("Accept", "application/" + requestData.getFormat().toString())
-                    .execute();
+            if (lastResponse != null && lastResponse.getEtag() != null)
+                req.addHeader("If-None-Match", lastResponse.getEtag());
 
-            HttpResponse httpResponse = response.returnResponse();
+            final Response response = req.
+                    addHeader("Content-Type", "text/" + requestData.getFormat().toString()).
+                    addHeader("Accept", "application/" + requestData.getFormat().toString()).
+                    execute();
+
+            final HttpResponse httpResponse = response.returnResponse();
 
             String content = null;
             if (httpResponse.getEntity() == null && lastResponse != null){
@@ -72,7 +74,6 @@ public class ArbsAPI {
                     httpResponse.getStatusLine().getStatusCode());
 
             return lastResponse;
-
 
         } catch (IOException e) {
             e.printStackTrace();

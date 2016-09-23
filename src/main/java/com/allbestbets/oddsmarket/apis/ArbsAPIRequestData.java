@@ -8,39 +8,37 @@ package com.allbestbets.oddsmarket.apis;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
+
 import java.util.Set;
 
-/**
- * Created by andrey on 22.09.16.
- */
-public class ArbsAPIRequestData extends BaseRequestData{
+public class ArbsAPIRequestData extends BaseRequestData {
 
-    public enum SortBy{
-        percent{
+    public enum SortBy {
+        percent {
             @Override
             public String toString() {
                 return "percent";
             }
         },
-        roi{
+        roi {
             @Override
             public String toString() {
                 return "roi";
             }
         },
-        middleValue{
+        middleValue {
             @Override
             public String toString() {
                 return "middleValue";
             }
         },
-        arbAge{
+        arbAge {
             @Override
             public String toString() {
                 return "arbAge";
             }
         },
-        beginningTime{
+        beginningTime {
             @Override
             public String toString() {
                 return "beginningTime";
@@ -214,98 +212,80 @@ public class ArbsAPIRequestData extends BaseRequestData{
     private String queryForGetRequest;
     private String bodyForPostRequest;
 
-    public ArbsAPIRequestData build(){
-        if (getMethod() == Method.GET){
-            StringBuilder sb = new StringBuilder();
-            sb.append("apiKey").append("=").append(getApiKey()).append("&");
+    public ArbsAPIRequestData build() {
+        if (getMethod() == Method.GET) {
+            final StringBuilder sb = new StringBuilder().
+                    append("apiKey").append("=").append(getApiKey()).append("&");
 
-            if (getSportIds() != null){
+            if (getSportIds() != null)
                 sb.append("sportIds").append("=").append(StringUtils.join(getSportIds(), ",")).append("&");
-            }
 
-            if (getGrouped() != null){
+            if (getGrouped() != null)
                 sb.append("grouped").append("=").append(getGrouped()).append("&");
-            }
 
-            if (getEventId() != null){
+            if (getEventId() != null)
                 sb.append("eventId").append("=").append(getEventId()).append("&");
-            }
 
-            if (getMinPercent() != null){
+            if (getMinPercent() != null)
                 sb.append("minPercent").append("=").append(getMinPercent()).append("&");
-            }
 
-            if (getMaxPercent() != null){
+            if (getMaxPercent() != null)
                 sb.append("maxPercent").append("=").append(getMaxPercent()).append("&");
-            }
 
-            if (getLimit() != null){
+            if (getLimit() != null)
                 sb.append("limit").append("=").append(getLimit()).append("&");
-            }
 
-            if (getExcludedBetIds() != null){
+            if (getExcludedBetIds() != null)
                 sb.append("excludedBetIds").append("=").append(StringUtils.join(getExcludedBetIds(), ",")).append("&");
-            }
 
-            if (getExcludedBkEventIds() != null){
+            if (getExcludedBkEventIds() != null)
                 sb.append("excludedBkEventIds").append("=").append(StringUtils.join(getExcludedBkEventIds(), ",")).append("&");
-            }
 
-            if (getExcludedArbIds() != null){
+            if (getExcludedArbIds() != null)
                 sb.append("excludedArbIds").append("=").append(StringUtils.join(getExcludedArbIds(), ",")).append("&");
-            }
 
-            if (getSortBy() != null){
+            if (getSortBy() != null)
                 sb.append("sortBy").append("=").append(getSortBy().toString()).append("&");
-            }
 
             queryForGetRequest = sb.toString();
-        }
 
-        if (getMethod() == Method.POST){
-            JSONObject json = new JSONObject();
+        } else if (getMethod() == Method.POST) {
+            final JSONObject json = new JSONObject();
 
-            if (getSportIds() != null){
+            if (getSportIds() != null)
                 json.put("sportIds", getSportIds());
-            }
 
-            if (getGrouped() != null){
+            if (getGrouped() != null)
                 json.put("grouped", getGrouped());
-            }
 
-            if (getEventId() != null){
+            if (getEventId() != null)
                 json.put("eventId", getEventId());
-            }
 
-            if (getMinPercent() != null){
+            if (getMinPercent() != null)
                 json.put("minPercent", getMinPercent());
-            }
 
-            if (getMaxPercent() != null){
+            if (getMaxPercent() != null)
                 json.put("maxPercent", getMaxPercent());
-            }
 
-            if (getLimit() != null){
+            if (getLimit() != null)
                 json.put("limit", getLimit());
-            }
 
-            if (getExcludedBetIds() != null){
+            if (getExcludedBetIds() != null)
                 json.put("excludedBetIds", getExcludedBetIds());
-            }
 
-            if (getExcludedBkEventIds() != null){
+            if (getExcludedBkEventIds() != null)
                 json.put("excludedBkEventIds", getExcludedBkEventIds());
-            }
 
-            if (getExcludedArbIds() != null){
+            if (getExcludedArbIds() != null)
                 json.put("excludedArbIds", getExcludedArbIds());
-            }
 
-            if (getSortBy() != null){
+            if (getSortBy() != null)
                 json.put("sortBy", getSortBy().toString());
-            }
 
             bodyForPostRequest = json.toString();
+
+        } else {
+            return null;
         }
 
         return this;

@@ -7,11 +7,9 @@ package com.allbestbets.oddsmarket.apis;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
+
 import java.util.Set;
 
-/**
- * Created by andrey on 21.09.16.
- */
 public class OddsAPIRequestData extends BaseRequestData {
 
     private String apiKey;
@@ -113,49 +111,47 @@ public class OddsAPIRequestData extends BaseRequestData {
     private String queryForGetRequest;
     private String bodyForPostRequest;
 
-    public OddsAPIRequestData build(){
-        if (getMethod() == Method.GET){
-            StringBuilder sb = new StringBuilder();
-            sb.append("apiKey").append("=").append(getApiKey()).append("&");
+    public OddsAPIRequestData build() {
+        if (getMethod() == Method.GET) {
+            final StringBuilder sb = new StringBuilder().
+                    append("apiKey").append("=").append(getApiKey()).append("&");
 
-            if (getSportIds() != null){
+            if (getSportIds() != null)
                 sb.append("sportIds").append("=").append(StringUtils.join(getSportIds(), ",")).append("&");
-            }
-            if (getOnlyMain() != null) {
+
+            if (getOnlyMain() != null)
                 sb.append("onlyMain").append("=").append(getOnlyMain()).append("&");
-            }
-            if (getOnlyBack() != null) {
+
+            if (getOnlyBack() != null)
                 sb.append("onlyBack").append("=").append(getOnlyBack()).append("&");
-            }
-            if (getShowDirectLink() != null) {
+
+            if (getShowDirectLink() != null)
                 sb.append("showDirectLink").append("=").append(getShowDirectLink()).append("&");
-            }
-            if (getLastUpdatedAt() != null) {
+
+            if (getLastUpdatedAt() != null)
                 sb.append("lastUpdatedAt").append("=").append(getLastUpdatedAt()).append("&");
-            }
 
             queryForGetRequest = sb.toString();
-        }
 
-        if (getMethod() == Method.POST){
-            JSONObject json = new JSONObject();
+        } else if (getMethod() == Method.POST) {
+            final JSONObject json = new JSONObject();
+
             json.put("apiKey", getApiKey());
 
-            if (getSportIds() != null){
+            if (getSportIds() != null)
                 json.put("sportIds", getSportIds());
-            }
-            if (getOnlyMain() != null) {
+
+            if (getOnlyMain() != null)
                 json.put("onlyMain", getOnlyMain());
-            }
-            if (getOnlyBack() != null) {
+
+            if (getOnlyBack() != null)
                 json.put("onlyBack", getOnlyBack());
-            }
-            if (getShowDirectLink() != null) {
+
+            if (getShowDirectLink() != null)
                 json.put("showDirectLink", getShowDirectLink());
-            }
-            if (getLastUpdatedAt() != null) {
+
+            if (getLastUpdatedAt() != null)
                 json.put("lastUpdatedAt", getLastUpdatedAt());
-            }
 
             bodyForPostRequest = json.toString();
         }

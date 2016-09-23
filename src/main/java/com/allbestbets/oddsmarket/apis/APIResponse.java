@@ -1,12 +1,9 @@
 package com.allbestbets.oddsmarket.apis;
 
-/**
- * Created by andrey on 22.09.16.
- */
 public class APIResponse {
-    private String content;
-    private String etag;
-    private int code;
+    private final String content;
+    private final String etag;
+    private final int code;
 
     public APIResponse(String content, String etag, int code) {
         this.content = content;

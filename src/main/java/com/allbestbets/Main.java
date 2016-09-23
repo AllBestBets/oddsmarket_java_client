@@ -2,7 +2,6 @@ package com.allbestbets;
 
 import com.allbestbets.oddsmarket.OddsmarketAPI;
 import com.allbestbets.oddsmarket.apis.*;
-import org.apache.http.client.fluent.Response;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -40,6 +39,5 @@ public class Main {
 
         System.out.println("sports = " + OddsmarketAPI.sports().getContent());
         System.out.println("bookmakers = " + OddsmarketAPI.bookmakers().getContent());
-
     }
 }

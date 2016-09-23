@@ -9,9 +9,6 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 
-/**
- * Created by andrey on 22.09.16.
- */
 public class EventResultsAPI {
     public static final String API_URL = "https://api-mst.oddsmarket.org/v1/eventResults";
 
@@ -24,28 +21,30 @@ public class EventResultsAPI {
 
     public APIResponse execute() {
         try {
-            Request req = null;
+            final Request req;
 
             if (requestData.getMethod() == ArbsAPIRequestData.Method.GET) {
                 req = Request.Get(OddsmarketAPI.encodeURL(API_URL + "?" + requestData.getQueryForGetRequest()));
-            }
-            if (requestData.getMethod() == ArbsAPIRequestData.Method.POST) {
-                req = Request.Post(API_URL + "?apiKey=" + requestData.getApiKey());
-                req = req.bodyString(requestData.getBodyForPostRequest(), ContentType.APPLICATION_JSON);
+
+            } else if (requestData.getMethod() == ArbsAPIRequestData.Method.POST) {
+                req = Request.Post(API_URL + "?apiKey=" + requestData.getApiKey()).
+                        bodyString(requestData.getBodyForPostRequest(), ContentType.APPLICATION_JSON);
+            } else {
+                return null;
             }
 
             if (lastResponse != null) {
                 if (lastResponse.getEtag() != null) {
-                    req = req.addHeader("If-None-Match", lastResponse.getEtag());
+                    req.addHeader("If-None-Match", lastResponse.getEtag());
                 }
             }
 
-            Response response = req
+            final Response response = req
                     .addHeader("Content-Type", "text/" + requestData.getFormat().toString())
                     .addHeader("Accept", "application/" + requestData.getFormat().toString())
                     .execute();
 
-            HttpResponse httpResponse = response.returnResponse();
+            final HttpResponse httpResponse = response.returnResponse();
 
             String content = null;
             if (httpResponse.getEntity() == null && lastResponse != null){
@@ -59,7 +58,6 @@ public class EventResultsAPI {
                     httpResponse.getStatusLine().getStatusCode());
 
             return lastResponse;
-
 
         } catch (IOException e) {
             e.printStackTrace();

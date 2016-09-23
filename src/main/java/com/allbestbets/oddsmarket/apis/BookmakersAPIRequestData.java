@@ -1,11 +1,8 @@
 package com.allbestbets.oddsmarket.apis;
 
-/**
- * Created by andrey on 22.09.16.
- */
 public class BookmakersAPIRequestData extends BaseRequestData {
-    public BookmakersAPIRequestData() {
 
+    public BookmakersAPIRequestData() {
     }
 
     public BookmakersAPIRequestData(Method method, Format format) {
@@ -31,7 +28,7 @@ public class BookmakersAPIRequestData extends BaseRequestData {
         return this;
     }
 
-    public BookmakersAPIRequestData build(){
+    public BookmakersAPIRequestData build() {
         return this;
     }
 }

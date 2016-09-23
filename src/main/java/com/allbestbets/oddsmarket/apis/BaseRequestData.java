@@ -1,20 +1,17 @@
 package com.allbestbets.oddsmarket.apis;
 
-/**
- * Created by andrey on 22.09.16.
- */
 public abstract class BaseRequestData {
-    public enum Method{
+    public enum Method {
         GET, POST;
     }
 
-    public enum Format{
-        XML{
+    public enum Format {
+        XML {
             @Override
             public String toString() {
                 return "xml";
             }
-        }, JSON{
+        }, JSON {
             @Override
             public String toString() {
                 return "json";
