@@ -16,8 +16,13 @@ public class EventResultsAPI {
     public static final String API_URL = "https://api-mst.oddsmarket.org/v1/eventResults";
 
     private APIResponse lastResponse;
+    private EventResultsAPIRequestData requestData;
 
-    public APIResponse execute(EventResultsAPIRequestData requestData) {
+    public EventResultsAPI(EventResultsAPIRequestData requestData) {
+        this.requestData = requestData;
+    }
+
+    public APIResponse execute() {
         try {
             Request req = null;
 
@@ -29,13 +34,25 @@ public class EventResultsAPI {
                 req = req.bodyString(requestData.getBodyForPostRequest(), ContentType.APPLICATION_JSON);
             }
 
+            if (lastResponse != null) {
+                if (lastResponse.getEtag() != null) {
+                    req = req.addHeader("If-None-Match", lastResponse.getEtag());
+                }
+            }
+
             Response response = req
                     .addHeader("Content-Type", "text/" + requestData.getFormat().toString())
                     .addHeader("Accept", "application/" + requestData.getFormat().toString())
                     .execute();
 
             HttpResponse httpResponse = response.returnResponse();
-            String content = EntityUtils.toString(httpResponse.getEntity());
+
+            String content = null;
+            if (httpResponse.getEntity() == null && lastResponse != null){
+                content = lastResponse.getContent();
+            }else if (httpResponse.getEntity() != null){
+                content = EntityUtils.toString(httpResponse.getEntity());
+            }
 
             lastResponse = new APIResponse(content,
                     httpResponse.getFirstHeader("Etag") != null ? httpResponse.getFirstHeader("Etag").getValue() : null,

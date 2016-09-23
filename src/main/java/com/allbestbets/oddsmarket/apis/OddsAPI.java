@@ -23,8 +23,15 @@ public class OddsAPI {
 
     private APIResponse lastResponse;
     private long lastUpdatedAt;
+    private OddsAPIRequestData requestData;
+    private OddsmarketAPI.APIType type;
 
-    public APIResponse execute(OddsAPIRequestData requestData, OddsmarketAPI.APIType type) {
+    public OddsAPI(OddsAPIRequestData requestData, OddsmarketAPI.APIType type) {
+        this.requestData = requestData;
+        this.type = type;
+    }
+
+    public APIResponse execute() {
         try {
             long newUpdatedAt = new Date().getTime();
 
@@ -61,7 +68,13 @@ public class OddsAPI {
                     .execute();
 
             HttpResponse httpResponse = response.returnResponse();
-            String content = EntityUtils.toString(httpResponse.getEntity());
+
+            String content = null;
+            if (httpResponse.getEntity() == null && lastResponse != null){
+                content = lastResponse.getContent();
+            }else if (httpResponse.getEntity() != null){
+                content = EntityUtils.toString(httpResponse.getEntity());
+            }
 
             lastResponse = new APIResponse(content,
                     httpResponse.getFirstHeader("Etag") != null ? httpResponse.getFirstHeader("Etag").getValue() : null,

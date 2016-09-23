@@ -19,8 +19,15 @@ public class ArbsAPI {
     public static final String LIVE_URL = "https://api-lv.oddsmarket.org/v1/bookmakers/%s/arbs";
 
     private APIResponse lastResponse;
+    private ArbsAPIRequestData requestData;
+    private OddsmarketAPI.APIType type;
 
-    public APIResponse execute(ArbsAPIRequestData requestData, OddsmarketAPI.APIType type) {
+    public ArbsAPI(ArbsAPIRequestData requestData, OddsmarketAPI.APIType type) {
+        this.requestData = requestData;
+        this.type = type;
+    }
+
+    public APIResponse execute() {
         try {
             String serviceUrl;
             if (type == OddsmarketAPI.APIType.PREMATCH) {
@@ -52,7 +59,13 @@ public class ArbsAPI {
                     .execute();
 
             HttpResponse httpResponse = response.returnResponse();
-            String content = EntityUtils.toString(httpResponse.getEntity());
+
+            String content = null;
+            if (httpResponse.getEntity() == null && lastResponse != null){
+                content = lastResponse.getContent();
+            }else if (httpResponse.getEntity() != null){
+                content = EntityUtils.toString(httpResponse.getEntity());
+            }
 
             lastResponse = new APIResponse(content,
                     httpResponse.getFirstHeader("Etag") != null ? httpResponse.getFirstHeader("Etag").getValue() : null,
