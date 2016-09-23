@@ -3,14 +3,9 @@ package com.allbestbets.oddsmarket.apis;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Set;
 
-/**
- * Created by andrey on 22.09.16.
- */
-public class EventResultsAPIRequestData extends BaseRequestData{
+public class EventResultsAPIRequestData extends BaseRequestData {
 
     private String apiKey;
     private Set<Long> sportIds;
@@ -105,50 +100,43 @@ public class EventResultsAPIRequestData extends BaseRequestData{
     private String bodyForPostRequest;
 
     public EventResultsAPIRequestData build() {
-
         if (getMethod() == Method.GET) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("apiKey").append("=").append(getApiKey()).append("&");
+            final StringBuilder sb = new StringBuilder().
+                    append("apiKey").append("=").append(getApiKey()).append("&");
 
-            if (getSportIds() != null){
+            if (getSportIds() != null)
                 sb.append("sportIds").append("=").append(StringUtils.join(getSportIds(), ",")).append("&");
-            }
 
-            if (getLeagueId() != null){
+            if (getLeagueId() != null)
                 sb.append("leagueId").append("=").append(getLeagueId()).append("&");
-            }
 
-            if (getStartedFrom() != null){
+            if (getStartedFrom() != null)
                 sb.append("startedFrom").append("=").append(getStartedFrom()).append("&");
-            }
 
-            if (getStartedTo() != null){
+            if (getStartedTo() != null)
                 sb.append("startedTo").append("=").append(getStartedTo()).append("&");
-            }
 
             queryForGetRequest = sb.toString();
-        }
 
-        if (getMethod() == Method.POST) {
-            JSONObject json = new JSONObject();
+        } else if (getMethod() == Method.POST) {
+            final JSONObject json = new JSONObject();
 
-            if (getSportIds() != null) {
+            if (getSportIds() != null)
                 json.put("sportIds", getSportIds());
-            }
 
-            if (getLeagueId() != null){
+            if (getLeagueId() != null)
                 json.put("leagueId", getLeagueId());
-            }
 
-            if (getStartedFrom() != null){
+            if (getStartedFrom() != null)
                 json.put("startedFrom", getStartedFrom());
-            }
 
-            if (getStartedTo() != null){
+            if (getStartedTo() != null)
                 json.put("startedTo", getStartedTo());
-            }
 
             bodyForPostRequest = json.toString();
+
+        } else {
+            return null;
         }
 
         return this;

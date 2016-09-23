@@ -1,13 +1,8 @@
 package com.allbestbets.oddsmarket.apis;
 
-import java.util.Set;
-
-/**
- * Created by andrey on 22.09.16.
- */
 public class SportsAPIRequestData extends BaseRequestData {
-    public SportsAPIRequestData() {
 
+    public SportsAPIRequestData() {
     }
 
     public SportsAPIRequestData(Method method, Format format) {
@@ -33,7 +28,7 @@ public class SportsAPIRequestData extends BaseRequestData {
         return this;
     }
 
-    public SportsAPIRequestData build(){
+    public SportsAPIRequestData build() {
         return this;
     }
 }

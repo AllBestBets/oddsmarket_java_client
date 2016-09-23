@@ -12,47 +12,51 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 
-/**
- * Created by andrey on 21.09.16.
- */
 public class OddsmarketAPI {
+
+    private static final String SPORTS = "https://api-mst.oddsmarket.org/v1/sports";
+    private static final String BOOKMAKERS = "https://api-mst.oddsmarket.org/v1/bookmakers";
+
     public enum APIType {
         PREMATCH, LIVE;
     }
 
     public static String encodeURL(String urlStr) {
-        URL url = null;
+        final URL url;
+
         try {
             url = new URL(urlStr);
             URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+
             return uri.toASCIIString();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
-    private static final String SPORTS = "https://api-mst.oddsmarket.org/v1/sports";
-
     public static APIResponse sports(SportsAPIRequestData sportsAPIRequestData) {
         try {
-
-            Request req = null;
+            final Request req;
 
             if (sportsAPIRequestData.getMethod() == SportsAPIRequestData.Method.GET) {
                 req = Request.Get(OddsmarketAPI.encodeURL(SPORTS));
-            }
-            if (sportsAPIRequestData.getMethod() == SportsAPIRequestData.Method.POST) {
+
+            } else if (sportsAPIRequestData.getMethod() == SportsAPIRequestData.Method.POST) {
                 req = Request.Post(SPORTS);
+
+            } else {
+                return null;
             }
 
-            Response response = req
+            final Response response = req
                     .addHeader("Content-Type", "text/" + sportsAPIRequestData.getFormat().toString())
                     .addHeader("Accept", "application/" + sportsAPIRequestData.getFormat().toString())
                     .execute();
 
-            HttpResponse httpResponse = response.returnResponse();
-            String content = EntityUtils.toString(httpResponse.getEntity());
+            final HttpResponse httpResponse = response.returnResponse();
+            final String content = EntityUtils.toString(httpResponse.getEntity());
 
             return new APIResponse(content,
                     httpResponse.getFirstHeader("Etag") != null ? httpResponse.getFirstHeader("Etag").getValue() : null,
@@ -69,27 +73,28 @@ public class OddsmarketAPI {
         return sports(new SportsAPIRequestData().build());
     }
 
-    private static final String BOOKMAKERS = "https://api-mst.oddsmarket.org/v1/bookmakers";
 
     public static APIResponse bookmakers(BookmakersAPIRequestData sportsAPIRequestData) {
         try {
-            Request req = null;
+            final Request req;
 
             if (sportsAPIRequestData.getMethod() == BookmakersAPIRequestData.Method.GET) {
                 req = Request.Get(OddsmarketAPI.encodeURL(BOOKMAKERS));
-            }
 
-            if (sportsAPIRequestData.getMethod() == BookmakersAPIRequestData.Method.POST) {
+            } else if (sportsAPIRequestData.getMethod() == BookmakersAPIRequestData.Method.POST) {
                 req = Request.Post(BOOKMAKERS);
+
+            } else {
+                return null;
             }
 
-            Response response = req
+            final Response response = req
                     .addHeader("Content-Type", "text/" + sportsAPIRequestData.getFormat().toString())
                     .addHeader("Accept", "application/" + sportsAPIRequestData.getFormat().toString())
                     .execute();
 
-            HttpResponse httpResponse = response.returnResponse();
-            String content = EntityUtils.toString(httpResponse.getEntity());
+            final HttpResponse httpResponse = response.returnResponse();
+            final String content = EntityUtils.toString(httpResponse.getEntity());
 
             return new APIResponse(content,
                     httpResponse.getFirstHeader("Etag") != null ? httpResponse.getFirstHeader("Etag").getValue() : null,

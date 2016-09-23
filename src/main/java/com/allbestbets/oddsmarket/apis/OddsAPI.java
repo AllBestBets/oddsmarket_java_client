@@ -3,7 +3,6 @@ package com.allbestbets.oddsmarket.apis;
 import com.allbestbets.oddsmarket.OddsmarketAPI;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.entity.ContentType;
@@ -11,11 +10,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Set;
 
-/**
- * Created by andrey on 21.09.16.
- */
 public class OddsAPI {
 
     public static final String PREMATCH_URL = "https://api-pr.oddsmarket.org/v1/bookmakers/%s/odds";
@@ -26,53 +21,54 @@ public class OddsAPI {
 
     public APIResponse execute(OddsAPIRequestData requestData, OddsmarketAPI.APIType type) {
         try {
-            long newUpdatedAt = new Date().getTime();
+            final long newUpdatedAt = new Date().getTime();
 
-            String serviceUrl;
+            final String serviceUrl;
+
             if (type == OddsmarketAPI.APIType.PREMATCH) {
                 serviceUrl = PREMATCH_URL;
-            } else {
+
+            } else if (type == OddsmarketAPI.APIType.LIVE) {
                 serviceUrl = LIVE_URL;
+
+            } else {
+                return null;
             }
 
-            Request req = null;
-            String url = String.format(serviceUrl, StringUtils.join(requestData.getBookmakerIds(), ","));
+            final String url = String.format(serviceUrl, StringUtils.join(requestData.getBookmakerIds(), ","));
+            final Request req;
 
             if (requestData.getMethod() == OddsAPIRequestData.Method.GET) {
                 req = Request.Get(OddsmarketAPI.encodeURL(url + "?" + requestData.getQueryForGetRequest()));
+
+            } else if (requestData.getMethod() == OddsAPIRequestData.Method.POST) {
+                req = Request.Post(url).bodyString(requestData.getBodyForPostRequest(), ContentType.APPLICATION_JSON);
+
+            } else {
+                return null;
             }
 
-            if (requestData.getMethod() == OddsAPIRequestData.Method.POST) {
-                req = Request.Post(url);
-                req = req.bodyString(requestData.getBodyForPostRequest(), ContentType.APPLICATION_JSON);
-            }
-
-            if (lastResponse != null) {
-                if (lastResponse.getEtag() != null) {
-                    req = req.addHeader("If-None-Match", lastResponse.getEtag());
-                }
-            }
+            if (lastResponse != null && lastResponse.etag != null)
+                req.addHeader("If-None-Match", lastResponse.etag);
 
             requestData.setLastUpdatedAt(lastUpdatedAt);
 
-            Response response = req
-                    .addHeader("Content-Type", "text/" + requestData.getFormat().toString())
-                    .addHeader("Accept", "application/" + requestData.getFormat().toString())
-                    .execute();
+            final Response response = req.
+                    addHeader("Content-Type", "text/" + requestData.getFormat().toString()).
+                    addHeader("Accept", "application/" + requestData.getFormat().toString()).
+                    execute();
 
-            HttpResponse httpResponse = response.returnResponse();
-            String content = EntityUtils.toString(httpResponse.getEntity());
+            final HttpResponse httpResponse = response.returnResponse();
+            final String content = EntityUtils.toString(httpResponse.getEntity());
 
             lastResponse = new APIResponse(content,
                     httpResponse.getFirstHeader("Etag") != null ? httpResponse.getFirstHeader("Etag").getValue() : null,
                     httpResponse.getStatusLine().getStatusCode());
 
-            if (lastResponse.getCode() == 200) {
+            if (lastResponse.code == 200)
                 lastUpdatedAt = newUpdatedAt;
-            }
 
             return lastResponse;
-
 
         } catch (IOException e) {
             e.printStackTrace();
