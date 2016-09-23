@@ -20,12 +20,6 @@ public class Main {
 
         System.out.println("odds = " + resp.content.length());
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         final ArbsAPI arbsAPI = new ArbsAPI();
         final APIResponse arbsResp = arbsAPI.execute(new ArbsAPIRequestData(API_KEY,
                         new HashSet<Long>() {{
