@@ -29,57 +29,37 @@ public class ArbsAPI {
                 serviceUrl = LIVE_URL;
             }
 
+            Request req = null;
+            String url = String.format(serviceUrl, StringUtils.join(requestData.getBookmakerIds(), ","));
+
             if (requestData.getMethod() == ArbsAPIRequestData.Method.GET) {
-                String url = String.format(serviceUrl, StringUtils.join(requestData.getBookmakerIds(), ","));
-
-                Request req = Request.Get(OddsmarketAPI.encodeURL(url + "?" + requestData.getQueryForGetRequest()));
-
-                if (lastResponse != null){
-                    if (lastResponse.getEtag() != null) {
-                        req = req.addHeader("If-None-Match", lastResponse.getEtag());
-                    }
-                }
-
-                Response response = req
-                        .addHeader("Content-Type", "text/" + requestData.getFormat().toString())
-                        .addHeader("Accept", "application/" + requestData.getFormat().toString())
-                        .execute();
-
-                HttpResponse httpResponse = response.returnResponse();
-                String content = EntityUtils.toString(httpResponse.getEntity());
-
-                lastResponse = new APIResponse(content,
-                        httpResponse.getFirstHeader("Etag") != null ? httpResponse.getFirstHeader("Etag").getValue() : null,
-                        httpResponse.getStatusLine().getStatusCode());
-
-                return lastResponse;
+                req = Request.Get(OddsmarketAPI.encodeURL(url + "?" + requestData.getQueryForGetRequest()));
             }
-
             if (requestData.getMethod() == ArbsAPIRequestData.Method.POST) {
-                String url = String.format(serviceUrl, StringUtils.join(requestData.getBookmakerIds(), ","));
-                Request req = Request.Post(url + "?apiKey="+requestData.getApiKey());
-
-                if (lastResponse != null){
-                    if (lastResponse.getEtag() != null) {
-                        req = req.addHeader("If-None-Match", lastResponse.getEtag());
-                    }
-                }
-
-                Response response = req
-                        .addHeader("Content-Type", "text/" + requestData.getFormat().toString())
-                        .addHeader("Accept", "application/" + requestData.getFormat().toString())
-                        .bodyString(requestData.getBodyForPostRequest(), ContentType.APPLICATION_JSON)
-                        .execute();
-
-                HttpResponse httpResponse = response.returnResponse();
-                String content = EntityUtils.toString(httpResponse.getEntity());
-
-                lastResponse = new APIResponse(content,
-                        httpResponse.getFirstHeader("Etag") != null ? httpResponse.getFirstHeader("Etag").getValue() : null,
-                        httpResponse.getStatusLine().getStatusCode());
-
-                return lastResponse;
+                req = Request.Post(url + "?apiKey=" + requestData.getApiKey());
+                req = req.bodyString(requestData.getBodyForPostRequest(), ContentType.APPLICATION_JSON);
             }
+
+            if (lastResponse != null) {
+                if (lastResponse.getEtag() != null) {
+                    req = req.addHeader("If-None-Match", lastResponse.getEtag());
+                }
+            }
+
+            Response response = req
+                    .addHeader("Content-Type", "text/" + requestData.getFormat().toString())
+                    .addHeader("Accept", "application/" + requestData.getFormat().toString())
+                    .execute();
+
+            HttpResponse httpResponse = response.returnResponse();
+            String content = EntityUtils.toString(httpResponse.getEntity());
+
+            lastResponse = new APIResponse(content,
+                    httpResponse.getFirstHeader("Etag") != null ? httpResponse.getFirstHeader("Etag").getValue() : null,
+                    httpResponse.getStatusLine().getStatusCode());
+
+            return lastResponse;
+
 
         } catch (IOException e) {
             e.printStackTrace();
