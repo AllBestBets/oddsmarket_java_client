@@ -8,12 +8,13 @@ package com.allbestbets.oddsmarket.apis;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class OddsAPIRequestData extends BaseRequestData {
 
     private String apiKey;
-    private Set<Long> bookmakerIds;
+    private Set<Long> bookmakerIds = new HashSet<Long>();
 
     private Set<Long> sportIds;
     private Boolean onlyMain;
@@ -21,28 +22,29 @@ public class OddsAPIRequestData extends BaseRequestData {
     private Boolean showDirectLink;
     private Long lastUpdatedAt;
 
-    public OddsAPIRequestData(String apiKey, Set<Long> bookmakerIds) {
-        this.apiKey = apiKey;
-        this.bookmakerIds = bookmakerIds;
+    public OddsAPIRequestData(String apiKey, long... bookmakerIds) {
+        this(apiKey, null, null, bookmakerIds);
     }
 
-    public OddsAPIRequestData(String apiKey, Set<Long> bookmakerIds, Method method) {
-        this.apiKey = apiKey;
-        this.bookmakerIds = bookmakerIds;
-        this.method = method;
+    public OddsAPIRequestData(String apiKey, Method method, long... bookmakerIds) {
+        this(apiKey, method, null, bookmakerIds);
     }
 
-    public OddsAPIRequestData(String apiKey, Set<Long> bookmakerIds, Format format) {
-        this.apiKey = apiKey;
-        this.bookmakerIds = bookmakerIds;
-        this.format = format;
+    public OddsAPIRequestData(String apiKey, Format format, long... bookmakerIds) {
+        this(apiKey, null, format, bookmakerIds);
     }
 
-    public OddsAPIRequestData(String apiKey, Set<Long> bookmakerIds, Method method, Format format) {
+    public OddsAPIRequestData(String apiKey, Method method, Format format, long... bookmakerIds) {
         this.apiKey = apiKey;
-        this.bookmakerIds = bookmakerIds;
-        this.method = method;
-        this.format = format;
+
+        if (method != null)
+            this.method = method;
+
+        if (format != null)
+            this.format = format;
+
+        for (long bookmakerId : bookmakerIds)
+            this.bookmakerIds.add(bookmakerId);
     }
 
     public OddsAPIRequestData setApiKey(String apiKey) {

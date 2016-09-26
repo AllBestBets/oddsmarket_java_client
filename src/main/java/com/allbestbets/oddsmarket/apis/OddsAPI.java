@@ -28,7 +28,9 @@ public class OddsAPI {
 
     public APIResponse execute() {
         try {
-            final long newUpdatedAt = new Date().getTime();
+            requestData.setLastUpdatedAt(lastUpdatedAt).build();
+
+            final long newUpdatedAt = new Date().getTime() / 1000;
 
             final String serviceUrl;
 
@@ -70,10 +72,12 @@ public class OddsAPI {
             final HttpResponse httpResponse = response.returnResponse();
 
             String content = null;
-            if (httpResponse.getEntity() == null && lastResponse != null){
+            if (httpResponse.getEntity() == null && lastResponse != null) {
                 content = lastResponse.getContent();
-            }else if (httpResponse.getEntity() != null){
+
+            } else if (httpResponse.getEntity() != null) {
                 content = EntityUtils.toString(httpResponse.getEntity());
+
             }
 
             lastResponse = new APIResponse(content,
