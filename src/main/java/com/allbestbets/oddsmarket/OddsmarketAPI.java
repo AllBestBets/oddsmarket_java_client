@@ -53,6 +53,7 @@ public class OddsmarketAPI {
             final Response response = req
                     .addHeader("Content-Type", "text/" + sportsAPIRequestData.getFormat().toString())
                     .addHeader("Accept", "application/" + sportsAPIRequestData.getFormat().toString())
+                    .addHeader("Accept-Encoding", "gzip")
                     .execute();
 
             final HttpResponse httpResponse = response.returnResponse();
@@ -91,6 +92,7 @@ public class OddsmarketAPI {
             final Response response = req
                     .addHeader("Content-Type", "text/" + sportsAPIRequestData.getFormat().toString())
                     .addHeader("Accept", "application/" + sportsAPIRequestData.getFormat().toString())
+                    .addHeader("Accept-Encoding", "gzip")
                     .execute();
 
             final HttpResponse httpResponse = response.returnResponse();

@@ -42,6 +42,7 @@ public class EventResultsAPI {
             final Response response = req
                     .addHeader("Content-Type", "text/" + requestData.getFormat().toString())
                     .addHeader("Accept", "application/" + requestData.getFormat().toString())
+                    .addHeader("Accept-Encoding", "gzip")
                     .execute();
 
             final HttpResponse httpResponse = response.returnResponse();
